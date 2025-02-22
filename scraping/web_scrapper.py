@@ -64,8 +64,12 @@ def save_last_accessed_url(genre, page_num, file_path="data/raw/last_accessed_ur
         json.dump({"genre": genre, "page": page_num}, file)
 
 
-def scrape_anime_details(driver, file_path="data/raw/raw_scraped_data.csv"):
+# Scrape and save anime details
+def scrape_anime_details(driver, file_path="data/raw/raw_scraped_anime_data.csv"):
     anime_blocks = driver.find_elements(By.CLASS_NAME, "js-anime-category-producer.seasonal-anime")
+    if not anime_blocks:
+        print("No anime data found on this page. Skipping...")
+        return  1 # Skip processing if no anime blocks are found
     scraped_data = []
 
     for anime in anime_blocks:
@@ -91,7 +95,7 @@ def scrape_anime_details(driver, file_path="data/raw/raw_scraped_data.csv"):
             genres = [genre.text.strip() for genre in genre_elements]
 
             # Append extracted data
-            scraped_data.append([title, subtitle, title_url, ", ".join(genres), synopsis])
+            scraped_data.append([title, subtitle, title_url, ", ".join(genres), synopsis, "Anime"])
 
         except Exception as e:
             print(f"Error scraping anime: {e}")
@@ -104,10 +108,62 @@ def scrape_anime_details(driver, file_path="data/raw/raw_scraped_data.csv"):
     with open(file_path, mode="a", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         if not file_exists:
-            writer.writerow(["Title", "Subtitle", "URL", "Genres", "Synopsis"])  # Header
+            writer.writerow(["Title", "Subtitle", "URL", "Genres", "Synopsis", "Type"])  # Header
         writer.writerows(scraped_data)
 
     print(f"Scraped {len(scraped_data)} anime entries from the page.")
+
+
+# Scrape and save manga details
+def scrape_manga_details(driver, file_path="data/raw/raw_scraped_manga_data.csv"):
+    manga_blocks = driver.find_elements(By.CLASS_NAME, "js-seasonal-anime")  # Adjust the selector for manga
+    scraped_data = []
+    if not manga_blocks:
+        print("No anime data found on this page. Skipping...")
+        return 1 # Skip processing if no anime blocks are found
+
+    for manga in manga_blocks:
+        try:
+            # Extract Title & Subtitle
+            title_element = manga.find_element(By.CSS_SELECTOR, ".title-text .h2_manga_title a")
+            title = title_element.text.strip()
+            title_url = title_element.get_attribute("href")
+
+            try:
+                subtitle = manga.find_element(By.CSS_SELECTOR, ".title-text .h3_manga_subtitle").text.strip()
+            except:
+                subtitle = ""  # Subtitle may not always exist
+
+            # Extract Synopsis
+            try:
+                synopsis = manga.find_element(By.CSS_SELECTOR, ".synopsis.js-synopsis p").text.strip()
+            except:
+                synopsis = ""  # Some manga might not have a synopsis
+
+            # Extract Genres (Tags)
+            genre_elements = manga.find_elements(By.CSS_SELECTOR, ".genres-inner .genre a")
+            genres = [genre.text.strip() for genre in genre_elements]
+
+            # Append extracted data
+            scraped_data.append([title, subtitle, title_url, ", ".join(genres), synopsis, "Manga"])
+
+        except Exception as e:
+            print(f"Error scraping manga: {e}")
+            continue  # Skip to the next manga if an error occurs
+
+    # Save to CSV
+    os.makedirs("data/raw", exist_ok=True)
+    file_exists = os.path.isfile(file_path)
+
+    with open(file_path, mode="a", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(["Title", "Subtitle", "URL", "Genres", "Synopsis", "Type"])  # Header
+        writer.writerows(scraped_data)
+
+    print(f"Scraped {len(scraped_data)} manga entries from the page.")
+
+
 
 # Open genre links and paginate through them
 def open_genre_links(driver, file_path="data/raw/genre_links.csv"):
@@ -138,11 +194,21 @@ def open_genre_links(driver, file_path="data/raw/genre_links.csv"):
                     page_url = f"{current_genre_url}?page={page_num}"
                     driver.get(page_url)
                     print(f"Opened {current_genre_name} page {page_num}")
-                    scrape_anime_details(driver)  # Scrape and save anime details from this page
+                    if "manga" in current_genre_url:  # Check if the genre is for manga
+                        flag = scrape_manga_details(driver)
+                        # Save last accessed page number after successful scraping
+                        if flag == 0:
+                            save_last_accessed_url(current_genre_name, page_num + 1)
+                        if flag == 1:
+                            break  # Break out of the page loop for manga genre
+                    else:  # Otherwise, scrape anime details
+                        flag = scrape_anime_details(driver)
+                        # Save last accessed page number after successful scraping
+                        if flag == 0:
+                            save_last_accessed_url(current_genre_name, page_num + 1)
+                        if flag == 1:
+                            break  # Break out of the page loop for anime genre
 
-
-                    # Save last accessed page number after successful scraping
-                    save_last_accessed_url(current_genre_name, page_num + 1)
 
                 except NoSuchElementException:
                     print(f"Page {page_num} not found for {current_genre_name}. Moving to next genre.")
@@ -154,8 +220,11 @@ def open_genre_links(driver, file_path="data/raw/genre_links.csv"):
 def main():
     driver = get_web_driver()
     try:
+        # Uncomment the function you want to run
+        print("Scraping Genres...")
         #scrape_and_save_genre_links(driver)
-        open_genre_links(driver)
+        print("Scraping Details...")
+        #open_genre_links(driver)
     finally:
         driver.quit()
 
