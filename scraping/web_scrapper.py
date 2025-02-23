@@ -35,7 +35,6 @@ def scrape_and_save_genre_links(driver, file_path="data/raw/genre_links.csv"):
             genre_url = genre_tag.get_attribute('href')
             genre_data.append([genre_name, genre_url])
 
-
     # Ensure directory exists
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     file_exists = os.path.isfile(file_path)
@@ -82,13 +81,13 @@ def scrape_anime_details(driver, file_path="data/raw/raw_scraped_anime_data.csv"
             try:
                 subtitle = anime.find_element(By.CSS_SELECTOR, ".title-text .h3_anime_subtitle").text.strip()
             except:
-                subtitle = ""  # Subtitle may not always exist
+                subtitle = "" 
 
             # Extract Synopsis
             try:
                 synopsis = anime.find_element(By.CSS_SELECTOR, ".synopsis.js-synopsis p").text.strip()
             except:
-                synopsis = ""  # Some anime might not have a synopsis
+                synopsis = "" 
 
             # Extract Genres (Tags)
             genre_elements = anime.find_elements(By.CSS_SELECTOR, ".genres-inner .genre a")
@@ -116,11 +115,11 @@ def scrape_anime_details(driver, file_path="data/raw/raw_scraped_anime_data.csv"
 
 # Scrape and save manga details
 def scrape_manga_details(driver, file_path="data/raw/raw_scraped_manga_data.csv"):
-    manga_blocks = driver.find_elements(By.CLASS_NAME, "js-seasonal-anime")  # Adjust the selector for manga
+    manga_blocks = driver.find_elements(By.CLASS_NAME, "js-seasonal-anime") 
     scraped_data = []
     if not manga_blocks:
         print("No anime data found on this page. Skipping...")
-        return 1 # Skip processing if no anime blocks are found
+        return 1 # Skip processing if no manga blocks are found
 
     for manga in manga_blocks:
         try:
@@ -128,18 +127,17 @@ def scrape_manga_details(driver, file_path="data/raw/raw_scraped_manga_data.csv"
             title_element = manga.find_element(By.CSS_SELECTOR, ".title-text .h2_manga_title a")
             title = title_element.text.strip()
             title_url = title_element.get_attribute("href")
-
+            
+            # Extract Subtitle 
             try:
                 subtitle = manga.find_element(By.CSS_SELECTOR, ".title-text .h3_manga_subtitle").text.strip()
             except:
-                subtitle = ""  # Subtitle may not always exist
-
+                subtitle = ""  
             # Extract Synopsis
             try:
                 synopsis = manga.find_element(By.CSS_SELECTOR, ".synopsis.js-synopsis p").text.strip()
             except:
-                synopsis = ""  # Some manga might not have a synopsis
-
+                synopsis = ""  
             # Extract Genres (Tags)
             genre_elements = manga.find_elements(By.CSS_SELECTOR, ".genres-inner .genre a")
             genres = [genre.text.strip() for genre in genre_elements]
