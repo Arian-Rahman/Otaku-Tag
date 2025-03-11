@@ -20,7 +20,7 @@ layout: page
     padding: 40px;
     border-radius: 15px;
     max-width: 1200px;
-    margin: 50px auto;
+    margin: 20px auto 50px auto; /* Moved container up */
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -47,9 +47,9 @@ layout: page
   }
 
   .input-container input {
-    width: 60%;
-    padding: 12px;
-    font-size: 1.2em;
+    width: 70%; /* Increased width of the input */
+    padding: 15px; /* Increased padding for bigger input */
+    font-size: 1.3em; /* Increased font size */
     border-radius: 8px;
     border: none;
     margin-right: 20px;
@@ -57,8 +57,8 @@ layout: page
   }
 
   .input-container button {
-    padding: 12px 25px;
-    font-size: 1.2em;
+    padding: 12px 20px; /* Reduced padding for smaller button */
+    font-size: 1.1em; /* Smaller font size */
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -72,7 +72,7 @@ layout: page
   }
 
   .result-container {
-    width: 60%;
+    width: 70%; /* Adjusted width of result box */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -131,7 +131,6 @@ layout: page
     <div id="predictedGenres" class="result-box">Predicted genres will appear here.</div>
   </div>
 </div>
-
 <script>
   async function predictGenres() {
       const description = document.getElementById("description").value.trim();
