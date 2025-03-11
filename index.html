@@ -81,7 +81,7 @@ layout: page
           const resultResponse = await pollForResult(eventId)
           debugger
           // Extract prediction result
-          const predictedGenres = resultResponse?.data?.[0] || "No genres predicted.";
+          const predictedGenres = resultResponse|| "No genres predicted.";
 
           // Display result
           document.getElementById("predictedGenres").innerText = `Predicted Genres: ${predictedGenres}`;
@@ -90,8 +90,6 @@ layout: page
           document.getElementById("predictedGenres").innerText = "Error fetching prediction.";
       }
   }
-
-  // Function to poll the API until the result is ready
   async function pollForResult(eventId) {
     const pollUrl = `https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict/${eventId}`;
 
@@ -100,17 +98,20 @@ layout: page
     // Poll the result every 2 seconds
     while (!result) {
         const response = await fetch(pollUrl);
-        debugger
-        // Check if the response is empty or not JSON
-        const text = await response.text(); // Read response as text
+
+        // Read response as text
+        const text = await response.text();
+
+        // Extract the JSON part from the SSE data (after `data:`)
         const jsonPart = text.split("data: ")[1]; // This should give the JSON part
 
         try {
-            const data = JSON.parse(jsonPart); // Manually parse JSON
-            debugger
-            // Check if prediction is complete
-            if (data?.status === "completed") {
-                result = data;
+            const data = JSON.parse(jsonPart); // Parse the JSON part
+
+            // Check if the prediction is completed and the response data exists
+            if (data && data[0]?.label) {
+                result = data[0].label;
+                console.log("Predicted Genres:", result);
             } else {
                 console.log("Waiting for prediction...");
                 await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
@@ -123,6 +124,7 @@ layout: page
     }
 
     return result;
+
 }
   
 </script>
