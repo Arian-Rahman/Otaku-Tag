@@ -6,17 +6,18 @@ layout: page
 <!-- Background Image -->
 <style>
   body {
-    background-image: url('manga_background.jpg');
+    background-image: url('manga_background.jpg'); /* Ensure the image path is correct */
     background-size: cover;
     background-position: center;
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    font-size: 0.9em; /* Reduced font size for body text */
   }
 
   .container {
-    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
     padding: 40px;
     border-radius: 15px;
     max-width: 1500px; /* Increased container width */
@@ -34,7 +35,7 @@ layout: page
   }
 
   p {
-    font-size: 1.2em;
+    font-size: 1.1em;
     margin-bottom: 20px;
   }
 
@@ -49,13 +50,14 @@ layout: page
   .input-container input {
     width: 80%; /* Increased width of the input */
     padding: 20px; /* Increased padding for bigger input */
-    font-size: 1.2em; /* Adjust font size for better readability */
+    font-size: 1.1em; /* Adjust font size for better readability */
     border-radius: 8px;
     border: none;
     margin-right: 20px;
     box-sizing: border-box;
     min-height: 150px; /* Increased input height */
     resize: vertical; /* Allow text box resizing vertically */
+    overflow: hidden; /* Prevent horizontal scrolling */
   }
 
   .input-container button {
