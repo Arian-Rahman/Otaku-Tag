@@ -2,12 +2,16 @@ import torch
 import gradio as gr 
 from transformers import AutoTokenizer,DistilBertForSequenceClassification,DistilBertTokenizerFast
 import numpy as np 
+from huggingface_hub import hf_hub_download
+import os
 
-mps_model_path = "../models/distilroberta_model_with_thresholds.pth" 
-cpu_model_path = "../models/model_cpu.pth"
-thresholds_path = "../models/thresholds_tensor.pth"
+os.chdir("..")
+os.chdir("models")
+mps_model_path = "distilroberta_model_with_thresholds.pth" 
+cpu_model_path = "model_cpu.pth"
+thresholds_path = "thresholds_tensor.pth"
+
 device = torch.device("mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu")
-#device="cpu"
 model = DistilBertForSequenceClassification.from_pretrained(
     "distilbert-base-uncased", 
     num_labels=13, 
