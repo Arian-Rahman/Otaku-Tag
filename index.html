@@ -53,15 +53,15 @@ layout: page
           alert("Please enter a description.");
           return;
       }
-
+      debugger
       // Hugging Face Gradio API Endpoint
-      const apiUrl = "https://soothsayer1221-otaku-tag.hf.space/run/predict"; 
+      const apiUrl = "https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict"; 
 
       // Construct the request payload
       const requestData = {
           data: [description] // Ensure it's an array as expected by Gradio
       };
-
+      debugger
       try {
           const response = await fetch(apiUrl, {
               method: "POST",
@@ -72,7 +72,7 @@ layout: page
           });
 
           const responseData = await response.json();
-
+          debugger
           // Extract prediction result
           const predictedGenres = responseData?.data[0] || "No genres predicted.";
 
