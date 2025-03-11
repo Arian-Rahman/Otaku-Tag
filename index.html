@@ -103,9 +103,10 @@ layout: page
         debugger
         // Check if the response is empty or not JSON
         const text = await response.text(); // Read response as text
-        debugger
+        const jsonPart = text.split("data: ")[1]; // This should give the JSON part
+
         try {
-            const data = JSON.parse(text); // Manually parse JSON
+            const data = JSON.parse(jsonPart); // Manually parse JSON
             debugger
             // Check if prediction is complete
             if (data?.status === "completed") {
