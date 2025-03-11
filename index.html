@@ -93,26 +93,35 @@ layout: page
 
   // Function to poll the API until the result is ready
   async function pollForResult(eventId) {
-      const pollUrl = `https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict/${eventId}`;
+    const pollUrl = `https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict/${eventId}`;
 
-      let result = null;
+    let result = null;
 
-      // Poll the result every 2 seconds
-      while (!result) {
-          const response = await fetch(pollUrl);
-          console.log(response)
-          debugger
-          const data = await response.json();
-          debugger
-          if (data?.status === "completed") {
-              debugger
-              result = data;
-          } else {
-              console.log("Waiting for prediction...");
-              await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
-          }
-      }
+    // Poll the result every 2 seconds
+    while (!result) {
+        const response = await fetch(pollUrl);
+        debugger
+        // Check if the response is empty or not JSON
+        const text = await response.text(); // Read response as text
+        debugger
+        try {
+            const data = JSON.parse(text); // Manually parse JSON
+            debugger
+            // Check if prediction is complete
+            if (data?.status === "completed") {
+                result = data;
+            } else {
+                console.log("Waiting for prediction...");
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+            }
+        } catch (error) {
+            console.error("Error parsing JSON:", error);
+            console.log("Response Text:", text); // Log raw response for debugging
+            break;
+        }
+    }
 
-      return result;
-  }
+    return result;
+}
+  
 </script>
