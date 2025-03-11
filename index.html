@@ -58,7 +58,7 @@ async function predictGenres() {
   const response = await fetch("https://api-inference.huggingface.co/models/soothsayer1221/Otaku-Tag/predict", {
     method: "POST",
     headers: {
-      "Authorization": "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",
+      "Authorization": "Bearer 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",
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
