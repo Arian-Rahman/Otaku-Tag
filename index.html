@@ -2,10 +2,6 @@
 title: Otaku Tag - Genre Prediction
 layout: page
 ---
----
-title: Otaku Tag - Genre Prediction
-layout: page
----
 
 <!-- Background Image -->
 <style>
@@ -13,17 +9,23 @@ layout: page
     background-image: url('manga_background.jpg');
     background-size: cover;
     background-position: center;
-    color: #fff;
+    color: white;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
   }
 
   .container {
     background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
     padding: 40px;
     border-radius: 15px;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 1200px;
+    margin: 50px auto;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
   }
 
   h1 {
@@ -36,17 +38,25 @@ layout: page
     margin-bottom: 20px;
   }
 
-  input[type="text"] {
-    width: 80%;
+  .input-container, .result-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .input-container input {
+    width: 60%;
     padding: 12px;
     font-size: 1.2em;
     border-radius: 8px;
     border: none;
-    margin-bottom: 20px;
+    margin-right: 20px;
     box-sizing: border-box;
   }
 
-  button {
+  .input-container button {
     padding: 12px 25px;
     font-size: 1.2em;
     background-color: #4CAF50;
@@ -57,23 +67,48 @@ layout: page
     transition: background-color 0.3s;
   }
 
-  button:hover {
+  .input-container button:hover {
     background-color: #45a049;
+  }
+
+  .result-container {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
   }
 
   .result-box {
     border: 2px solid #ddd;
     padding: 20px;
     border-radius: 10px;
-    width: 80%;
-    margin: 0 auto;
+    width: 100%;
     font-size: 1.3em;
     font-weight: bold;
     color: #444;
+    background-color: white;
+    color: black;
   }
 
-  ol {
-    font-size: 1.1em;
+  /* Adjustments for small screens */
+  @media (max-width: 768px) {
+    .container {
+      width: 90%;
+    }
+
+    .input-container input {
+      width: 80%;
+      margin-bottom: 20px;
+    }
+
+    .input-container button {
+      width: 100%;
+    }
+
+    .result-container {
+      width: 80%;
+    }
   }
 </style>
 
@@ -85,27 +120,16 @@ layout: page
   <!-- Instructions -->
   <p>Enter a description of an anime or manga below, and let our AI model predict its genres!</p>
 
-  <hr>
-
   <!-- Input Section -->
-  <h2>📚 Enter Anime/Manga Description:</h2>
-  <p>Type a brief description of the anime or manga, and we will predict the genres associated with it.</p>
-
-  <!-- Description Input -->
-  <input id="description" type="text" placeholder="Enter description here...">
-
-  <!-- Prediction Button -->
-  <div>
+  <div class="input-container">
+    <input id="description" type="text" placeholder="Enter description here...">
     <button onclick="predictGenres()">Get Predicted Genres</button>
   </div>
 
   <!-- Result Section -->
-  <div id="result" class="result-box">
-    <div id="predictedGenres">Predicted genres will appear here.</div>
+  <div id="result" class="result-container">
+    <div id="predictedGenres" class="result-box">Predicted genres will appear here.</div>
   </div>
-
-  <hr>
-
 </div>
 
 <script>
