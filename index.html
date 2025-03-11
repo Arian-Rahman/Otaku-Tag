@@ -45,38 +45,44 @@ layout: page
 <p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
 
 <!-- Script to Handle the Prediction -->
-<script>
-async function predictGenres() {
-    const description = document.getElementById("description").value;
-    if (!description) {
+<script type="module">
+  import { Client } from "@gradio/client";
+
+  // Wait until the DOM is fully loaded
+  document.addEventListener("DOMContentLoaded", function() {
+    // Connect to Gradio Client
+    const client = await Client.connect("soothsayer1221/Otaku-Tag");
+
+    async function predictGenres() {
+      const description = document.getElementById("description").value;
+      if (!description) {
         alert("Please enter a description!");
         return;
-    }
+      }
 
-    try {
-        const response = await fetch("https://api-inference.huggingface.co/models/soothsayer1221/Otaku-Tag", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                description: description
-            }),
+      try {
+        // Make prediction request to the model
+        const result = await client.predict("/predict", {
+          description: description,
         });
 
-        const data = await response.json();
-        console.log(data); // Log the JSON response
+        // Log the result (you can remove this line if unnecessary)
+        console.log(result.data); 
 
-        // Just print the JSON response as is
+        // Display the predicted genres
         const predictedGenresElement = document.getElementById("predictedGenres");
-        predictedGenresElement.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-
-    } catch (error) {
+        predictedGenresElement.innerHTML = `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+        
+      } catch (error) {
         console.error("Error fetching data:", error);
         document.getElementById("predictedGenres").innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
     }
-}
 
-// Attach event listener to button
-document.getElementById('predictButton').addEventListener('click', predictGenres);
+    // Attach event listener to button after DOM is loaded
+    const button = document.getElementById("predictButton");
+    if (button) {
+      button.addEventListener("click", predictGenres);
+    }
+  });
 </script>
