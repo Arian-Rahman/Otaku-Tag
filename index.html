@@ -44,8 +44,10 @@ layout: page
 </ol>
 <p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
 
+<!-- Load Gradio Client -->
+<script src="https://cdn.jsdelivr.net/npm/gradio@2.0.4/gradio.min.js"></script>
+
 <!-- Script to Handle the Prediction -->
-<script src="https://cdn.jsdelivr.net/npm/@gradio/client"></script>
 <script>
   async function predictGenres() {
     // Get the description entered by the user
@@ -58,9 +60,8 @@ layout: page
 
     try {
       // Set up the client and make the prediction request
-      const client = await gradio.Client.connect("soothsayer1221/Otaku-Tag");
+      const client = new gradio.Client("soothsayer1221/Otaku-Tag");
       const result = await client.predict(
-        "/predict", 
         { description: description }
       );
 
