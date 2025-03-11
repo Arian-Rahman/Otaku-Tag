@@ -1,133 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Otaku Tag - Genre Prediction</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: #fff;
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 36px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        p {
-            font-size: 18px;
-            color: #555;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin: 20px 0;
-            font-size: 16px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
-        }
-        #result h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        #result p {
-            font-size: 18px;
-            color: #4CAF50;
-        }
-        .error {
-            color: red;
-            font-size: 16px;
-        }
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 28px;
-            }
-            p {
-                font-size: 16px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🎌 Otaku Tag - AI Genre Prediction 🎌</h1>
-        <p>Enter an anime or manga description, and get the predicted genres!</p>
+---
+title: Otaku Tag - Genre Prediction
+layout: page
+---
 
-        <input type="text" id="description" placeholder="Enter description here..." />
-        <button onclick="predictGenres()">Get Predicted Genres</button>
+<!-- Page Title -->
+<h1 style="text-align: center; margin-bottom: 20px;">🎌 Otaku Tag - Genre Prediction 🎌</h1>
 
-        <div id="result"></div>
-    </div>
+<!-- Instructions -->
+<p style="text-align: center; font-size: 1.2em;">Enter a description of an anime or manga below, and let our AI model predict its genres!</p>
 
-    <script>
-        async function predictGenres() {
-            const description = document.getElementById("description").value;
-            if (!description) {
-                alert("Please enter a description!");
-                return;
-            }
+<hr>
 
-            try {
-                const response = await fetch("https://api-inference.huggingface.co/models/soothsayer1221/Otaku-Tag", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        inputs: {
-                            description: description,
-                        },
-                    }),
-                });
-                const data = await response.json();
-                if (data && data.length > 0) {
-                    document.getElementById("result").innerHTML = `
-                        <h3>Predicted Genres:</h3>
-                        <p>${data.join(', ')}</p>
-                    `;
-                } else {
-                    document.getElementById("result").innerHTML = '<p>No genres predicted.</p>';
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                document.getElementById("result").innerHTML = `<p class="error">Error: ${error.message}</p>`;
-            }
-        }
-    </script>
-</body>
-</html>
+<!-- Input Section -->
+<h2 style="text-align: center;">📚 Enter Anime/Manga Description:</h2>
+<p style="text-align: center; font-size: 1.1em;">Type a brief description of the anime or manga, and we will predict the genres associated with it.</p>
+
+<!-- Description Input -->
+<div style="margin-top: 20px; text-align: center;">
+  <input id="description" type="text" placeholder="Enter description here..." style="font-size: 1.2em; padding: 10px; margin-bottom: 20px; width: 80%;">
+</div>
+
+<!-- Prediction Button -->
+<div style="text-align: center;">
+  <button onclick="predictGenres()" style="font-size: 1.2em; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Get Predicted Genres</button>
+</div>
+
+<!-- Result Section -->
+<div id="result" style="display: flex; justify-content: center; align-items: center; margin-top: 40px; font-size: 1.3em;">
+  <div style="border: 2px solid #ddd; padding: 20px; border-radius: 10px; width: 60%; text-align: center;">
+    <!-- Predicted Genres -->
+    <div id="predictedGenres" style="font-weight: bold; color: #444;"></div>
+  </div>
+</div>
+
+<hr>
+
+<!-- How It Works Section -->
+<h2 style="text-align: center;">🎬 How It Works:</h2>
+<ol style="text-align: center; font-size: 1.1em;">
+  <li><strong>Enter a description</strong>: Type a brief description of an anime or manga.</li>
+  <li><strong>Get a prediction</strong>: The model will predict the genres based on the description.</li>
+  <li><strong>Explore more</strong>: Try different descriptions to explore more genres.</li>
+</ol>
+<p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
+
+<!-- Script to Handle the Prediction -->
+<script>
+  async function predictGenres() {
+    const description = document.getElementById('description').value;
+    if (!description) {
+      alert("Please enter a description!");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://api-inference.huggingface.co/models/soothsayer1221/Otaku-Tag", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: {
+            description: description,
+          },
+        }),
+      });
+      const data = await response.json();
+      const genres = data[0].labels.join(", ");  // Adjust based on response structure
+
+      // Display the predicted genres
+      document.getElementById('predictedGenres').innerHTML = `Predicted Genres: <span style="color: #e67e22;">${genres}</span>`;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      document.getElementById('predictedGenres').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+    }
+  }
+</script>
