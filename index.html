@@ -44,39 +44,37 @@ layout: page
 </ol>
 <p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
 
-<!-- Load Gradio Client -->
-<script src="https://cdn.jsdelivr.net/npm/gradio@2.0.4/gradio.min.js"></script>
-
 <!-- Script to Handle the Prediction -->
 <script>
-  async function predictGenres() {
-    // Get the description entered by the user
-    const description = document.getElementById('description').value;
+async function predictGenres() {
+  const description = document.getElementById('description').value;
 
-    if (!description) {
-      alert("Please enter a description.");
-      return;
-    }
-
-    try {
-      // Set up the client and make the prediction request
-      const client = new gradio.Client("soothsayer1221/Otaku-Tag");
-      const result = await client.predict(
-        { description: description }
-      );
-
-      // Extract the predicted genres
-      const genres = result.data.label;
-
-      // Display the predicted genres
-      if (genres) {
-        document.getElementById('predictedGenres').innerText = `Predicted Genres: ${genres}`;
-      } else {
-        document.getElementById('predictedGenres').innerText = 'Error: Unexpected API response.';
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      document.getElementById('predictedGenres').innerText = 'Error fetching prediction.';
-    }
+  if (!description) {
+    alert('Please enter a description!');
+    return;
   }
+
+  // Call the Hugging Face API using the correct model endpoint
+  const response = await fetch("https://api-inference.huggingface.co/models/soothsayer1221/Otaku-Tag/predict", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_HUGGINGFACE_API_KEY",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      inputs: description
+    })
+  });
+
+  const result = await response.json();
+  console.log(result);  // Log the result to check
+
+  // Display the predicted genres
+  const predictedGenres = document.getElementById('predictedGenres');
+  if (result && result.label) {
+    predictedGenres.innerHTML = `Predicted Genres: <span style="color: #e67e22;">${result.label}</span>`;
+  } else {
+    predictedGenres.innerHTML = 'Error: Unable to get prediction. Please try again later.';
+  }
+}
 </script>
