@@ -3,76 +3,212 @@ title: Otaku Tag - Genre Prediction
 layout: page
 ---
 
-<!-- Page Title -->
-<h1 style="text-align: center; margin-bottom: 20px;">🎌 Otaku Tag - Genre Prediction 🎌</h1>
+<!-- Background Image -->
+<style>
+  body {
+    background-image: url('manga_background.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
 
-<!-- Instructions -->
-<p style="text-align: center; font-size: 1.2em;">Enter a description of an anime or manga below, and let our AI model predict its genres!</p>
+  .container {
+    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 1500px; /* Increased container width */
+    margin: 20px auto 50px auto; /* Adjusted container margin */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-<hr>
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+  }
 
-<!-- Input Section -->
-<h2 style="text-align: center;">📚 Enter Anime/Manga Description:</h2>
-<p style="text-align: center; font-size: 1.1em;">Type a brief description of the anime or manga, and we will predict the genres associated with it.</p>
+  p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
 
-<!-- Description Input -->
-<div style="margin-top: 20px; text-align: center;">
-  <input id="description" type="text" placeholder="Enter description here..." style="font-size: 1.2em; padding: 10px; margin-bottom: 20px; width: 80%;">
-</div>
+  .input-container, .result-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-<!-- Prediction Button -->
-<div style="text-align: center;">
-  <button onclick="predictGenres()" style="font-size: 1.2em; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Get Predicted Genres</button>
-</div>
+  .input-container input {
+    width: 80%; /* Increased width of the input */
+    padding: 20px; /* Increased padding for bigger input */
+    font-size: 1.5em; /* Increased font size for better readability */
+    border-radius: 8px;
+    border: none;
+    margin-right: 20px;
+    box-sizing: border-box;
+    min-height: 100px; /* Increased input height */
+    resize: vertical; /* Allow text box resizing vertically */
+  }
 
-<!-- Result Section -->
-<div id="result" style="display: flex; justify-content: center; align-items: center; margin-top: 40px; font-size: 1.3em;">
-  <div style="border: 2px solid #ddd; padding: 20px; border-radius: 10px; width: 60%; text-align: center;">
-    <!-- Predicted Genres -->
-    <div id="predictedGenres" style="font-weight: bold; color: #444;"></div>
+  .input-container button {
+    padding: 12px 20px; /* Reduced padding for smaller button */
+    font-size: 1.1em; /* Smaller font size */
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .input-container button:hover {
+    background-color: #45a049;
+  }
+
+  .result-container {
+    width: 80%; /* Adjusted width of result box */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .result-box {
+    border: 2px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #444;
+    background-color: white;
+    color: black;
+  }
+
+  /* Adjustments for small screens */
+  @media (max-width: 768px) {
+    .container {
+      width: 90%;
+    }
+
+    .input-container input {
+      width: 80%;
+      margin-bottom: 20px;
+    }
+
+    .input-container button {
+      width: 100%;
+    }
+
+    .result-container {
+      width: 80%;
+    }
+  }
+</style>
+
+<!-- Page Content -->
+<div class="container">
+  <!-- Page Title -->
+  <h1>🎌 Otaku Tag - Genre Prediction 🎌</h1>
+
+  <!-- Instructions -->
+  <p>Enter a description of an anime or manga below, and let our AI model predict its genres!</p>
+
+  <!-- Input Section -->
+  <div class="input-container">
+    <input id="description" type="text" placeholder="Enter description here...">
+    <button onclick="predictGenres()">Get Predicted Genres</button>
+  </div>
+
+  <!-- Result Section -->
+  <div id="result" class="result-container">
+    <div id="predictedGenres" class="result-box">Predicted genres will appear here.</div>
   </div>
 </div>
 
-<hr>
 
-<!-- How It Works Section -->
-<h2 style="text-align: center;">🎬 How It Works:</h2>
-<ol style="text-align: center; font-size: 1.1em;">
-  <li><strong>Enter a description</strong>: Type a brief description of an anime or manga.</li>
-  <li><strong>Get a prediction</strong>: The model will predict the genres based on the description.</li>
-  <li><strong>Explore more</strong>: Try different descriptions to explore more genres.</li>
-</ol>
-<p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
-
-<!-- Script to Handle the Prediction -->
 <script>
   async function predictGenres() {
-    const description = document.getElementById('description').value;
-    if (!description) {
-      alert("Please enter a description!");
-      return;
-    }
+      const description = document.getElementById("description").value.trim();
 
-    try {
-      const response = await fetch("https://api-inference.huggingface.co/models/soothsayer1221/Otaku-Tag", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: {
-            description: description,
-          },
-        }),
-      });
-      const data = await response.json();
-      const genres = data[0].labels.join(", ");  // Adjust based on response structure
+      if (!description) {
+          alert("Please enter a description.");
+          return;
+      }
+      const apiUrl = "https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict"; 
 
-      // Display the predicted genres
-      document.getElementById('predictedGenres').innerHTML = `Predicted Genres: <span style="color: #e67e22;">${genres}</span>`;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      document.getElementById('predictedGenres').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-    }
+      // Construct the request payload
+      const requestData = {
+          data: [description] // Ensure it's an array as expected by Gradio
+      };
+
+      try {
+          // Send the initial request to trigger the prediction
+          const response = await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(requestData)
+          });
+
+          const responseData = await response.json();
+          const eventId = responseData.event_id;
+
+          if (!eventId) {
+              throw new Error("No event_id returned from the API.");
+          }
+          console.log("Event ID:", eventId);
+          const resultResponse = await pollForResult(eventId)
+          const predictedGenres = resultResponse|| "No genres predicted.";
+
+          document.getElementById("predictedGenres").innerText = `${predictedGenres}`;
+      } catch (error) {
+          console.error("Error:", error);
+          document.getElementById("predictedGenres").innerText = "Error fetching prediction.";
+      }
   }
+  async function pollForResult(eventId) {
+    const pollUrl = `https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict/${eventId}`;
+
+    let result = null;
+
+    // Poll the result every 2 seconds
+    while (!result) {
+        const response = await fetch(pollUrl);
+
+        // Read response as text
+        const text = await response.text();
+
+        // Extract the JSON part from the SSE data (after `data:`)
+        const jsonPart = text.split("data: ")[1]; // This should give the JSON part
+
+        try {
+            const data = JSON.parse(jsonPart); // Parse the JSON part
+
+            // Check if the prediction is completed and the response data exists
+            if (data && data[0]?.label) {
+                result = data[0].label;
+                console.log("Predicted Genres:", result);
+            } else {
+                console.log("Waiting for prediction...");
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+            }
+        } catch (error) {
+            console.error("Error parsing JSON:", error);
+            console.log("Response Text:", text); // Log raw response for debugging
+            break;
+        }
+    }
+
+    return result;
+
+}
+  
 </script>
