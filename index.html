@@ -44,37 +44,44 @@ layout: page
 </ol>
 <p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
 
-<!-- Script to Handle the Prediction -->
 <script>
   async function predictGenres() {
-      const description = document.getElementById("description").value;
+      const description = document.getElementById("description").value.trim();
 
-      if (!description.trim()) {
+      if (!description) {
           alert("Please enter a description.");
           return;
       }
-      debugger
-      // Hugging Face Gradio API Endpoint
+
       const apiUrl = "https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict"; 
 
       // Construct the request payload
       const requestData = {
           data: [description] // Ensure it's an array as expected by Gradio
       };
-      debugger
+
       try {
+          // Send the initial request to trigger the prediction
           const response = await fetch(apiUrl, {
               method: "POST",
-              headers: {
-                  "Content-Type": "application/json"
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify(requestData)
           });
 
           const responseData = await response.json();
+          const eventId = responseData.event_id;
+
+          if (!eventId) {
+              throw new Error("No event_id returned from the API.");
+          }
+
+          console.log("Event ID:", eventId);
+          debugger
+          // Poll the API to get the result using event_id
+          const resultResponse = await pollForResult(eventId);
           debugger
           // Extract prediction result
-          const predictedGenres = responseData?.data[0] || "No genres predicted.";
+          const predictedGenres = resultResponse?.data?.[0] || "No genres predicted.";
 
           // Display result
           document.getElementById("predictedGenres").innerText = `Predicted Genres: ${predictedGenres}`;
@@ -82,5 +89,27 @@ layout: page
           console.error("Error:", error);
           document.getElementById("predictedGenres").innerText = "Error fetching prediction.";
       }
+  }
+
+  // Function to poll the API until the result is ready
+  async function pollForResult(eventId) {
+      const pollUrl = `https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict/${eventId}`;
+
+      let result = null;
+
+      // Poll the result every 2 seconds
+      while (!result) {
+          const response = await fetch(pollUrl);
+          const data = await response.json();
+
+          if (data?.status === "completed") {
+              result = data;
+          } else {
+              console.log("Waiting for prediction...");
+              await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+          }
+      }
+
+      return result;
   }
 </script>
