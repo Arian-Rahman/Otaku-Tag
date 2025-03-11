@@ -46,33 +46,30 @@ layout: page
 
 <!-- Script to Handle the Prediction -->
 <script>
-  async function predictGenres() {
-    const description = document.getElementById('description').value;
-    if (!description) {
-      alert("Please enter a description!");
-      return;
-    }
-
-    try {
-      const response = await fetch("https://api-inference.huggingface.co/models/soothsayer1221/Otaku-Tag", {
+ async function loaded(reader) {   
+    const response = await fetch("https://soothsayer1221-cuisine-classifier-gradio-3-50-0.hf.space/run/predict", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: {
-            description: description,
-          },
-        }),
-      });
-      const data = await response.json();
-      const genres = data[0].labels.join(", ");  // Adjust based on response structure
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: [reader.result] }) // Send the base64 image
+    });
 
-      // Display the predicted genres
-      document.getElementById('predictedGenres').innerHTML = `Predicted Genres: <span style="color: #e67e22;">${genres}</span>`;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      document.getElementById('predictedGenres').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+    const json = await response.json();
+    console.log(json); // Log the response to check its structure
+
+    // Check if the response contains 'label' and display it
+    if (json && json.label) {
+        const label = json.label; // Access the predicted genres
+
+        // Display the uploaded image
+        const dishImage = document.getElementById('dishImage');
+        dishImage.src = reader.result;
+        dishImage.style.display = 'block';
+
+        // Display the predicted genres
+        const predictedCuisine = document.getElementById('predictedCuisine');
+        predictedCuisine.innerHTML = `Predicted Genres: <span style="color: #e67e22;">${label}</span>`;
+    } else {
+        document.getElementById('predictedCuisine').innerHTML = 'Error: Unexpected API response structure.';
     }
-  }
+}
 </script>
