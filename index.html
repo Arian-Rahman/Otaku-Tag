@@ -22,7 +22,7 @@ layout: page
 
 <!-- Prediction Button -->
 <div style="text-align: center;">
-  <button id="predictButton" style="font-size: 1.2em; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Get Predicted Genres</button>
+  <button onclick="predictGenres()" style="font-size: 1.2em; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Get Predicted Genres</button>
 </div>
 
 <!-- Result Section -->
@@ -45,44 +45,37 @@ layout: page
 <p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
 
 <!-- Script to Handle the Prediction -->
-<script type="module">
-  import { Client } from "@gradio/client";
+<script src="https://cdn.jsdelivr.net/npm/@gradio/client"></script>
+<script>
+  async function predictGenres() {
+    // Get the description entered by the user
+    const description = document.getElementById('description').value;
 
-  // Wait until the DOM is fully loaded
-  document.addEventListener("DOMContentLoaded", function() {
-    // Connect to Gradio Client
-    const client = await Client.connect("soothsayer1221/Otaku-Tag");
-
-    async function predictGenres() {
-      const description = document.getElementById("description").value;
-      if (!description) {
-        alert("Please enter a description!");
-        return;
-      }
-
-      try {
-        // Make prediction request to the model
-        const result = await client.predict("/predict", {
-          description: description,
-        });
-
-        // Log the result (you can remove this line if unnecessary)
-        console.log(result.data); 
-
-        // Display the predicted genres
-        const predictedGenresElement = document.getElementById("predictedGenres");
-        predictedGenresElement.innerHTML = `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
-        
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        document.getElementById("predictedGenres").innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-      }
+    if (!description) {
+      alert("Please enter a description.");
+      return;
     }
 
-    // Attach event listener to button after DOM is loaded
-    const button = document.getElementById("predictButton");
-    if (button) {
-      button.addEventListener("click", predictGenres);
+    try {
+      // Set up the client and make the prediction request
+      const client = await gradio.Client.connect("soothsayer1221/Otaku-Tag");
+      const result = await client.predict(
+        "/predict", 
+        { description: description }
+      );
+
+      // Extract the predicted genres
+      const genres = result.data.label;
+
+      // Display the predicted genres
+      if (genres) {
+        document.getElementById('predictedGenres').innerText = `Predicted Genres: ${genres}`;
+      } else {
+        document.getElementById('predictedGenres').innerText = 'Error: Unexpected API response.';
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      document.getElementById('predictedGenres').innerText = 'Error fetching prediction.';
     }
-  });
+  }
 </script>
