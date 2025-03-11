@@ -1,0 +1,26 @@
+remote_theme: daviddarnes/alembic@main
+plugins:
+  - jekyll-remote-theme
+
+navigation:
+  - name: Home
+    link: /
+  - name: Otaku Tag
+    link: /index.html
+
+
+permissions:
+  id-token: write
+  contents: read
+
+title: Otaku Tag
+description: Predicts genres for anime and manga based on descriptions.
+
+author:
+  name: Soothsayer1221
+
+exclude:
+  - README.md
+  - README.md
+  - models/README.md
+  - data/readme.md
