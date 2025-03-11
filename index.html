@@ -78,7 +78,7 @@ layout: page
           console.log("Event ID:", eventId);
           debugger
           // Poll the API to get the result using event_id
-          const resultResponse = await pollForResult(eventId);
+          const resultResponse = await pollForResult(eventId)
           debugger
           // Extract prediction result
           const predictedGenres = resultResponse?.data?.[0] || "No genres predicted.";
@@ -100,9 +100,12 @@ layout: page
       // Poll the result every 2 seconds
       while (!result) {
           const response = await fetch(pollUrl);
+          console.log(response)
+          debugger
           const data = await response.json();
-
+          debugger
           if (data?.status === "completed") {
+              debugger
               result = data;
           } else {
               console.log("Waiting for prediction...");
