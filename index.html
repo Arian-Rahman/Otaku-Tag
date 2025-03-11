@@ -2,47 +2,111 @@
 title: Otaku Tag - Genre Prediction
 layout: page
 ---
+---
+title: Otaku Tag - Genre Prediction
+layout: page
+---
 
-<!-- Page Title -->
-<h1 style="text-align: center; margin-bottom: 20px;">🎌 Otaku Tag - Genre Prediction 🎌</h1>
+<!-- Background Image -->
+<style>
+  body {
+    background-image: url('manga_background.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
 
-<!-- Instructions -->
-<p style="text-align: center; font-size: 1.2em;">Enter a description of an anime or manga below, and let our AI model predict its genres!</p>
+  .container {
+    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
 
-<hr>
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+  }
 
-<!-- Input Section -->
-<h2 style="text-align: center;">📚 Enter Anime/Manga Description:</h2>
-<p style="text-align: center; font-size: 1.1em;">Type a brief description of the anime or manga, and we will predict the genres associated with it.</p>
+  p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
 
-<!-- Description Input -->
-<div style="margin-top: 20px; text-align: center;">
-  <input id="description" type="text" placeholder="Enter description here..." style="font-size: 1.2em; padding: 10px; margin-bottom: 20px; width: 80%;">
-</div>
+  input[type="text"] {
+    width: 80%;
+    padding: 12px;
+    font-size: 1.2em;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
 
-<!-- Prediction Button -->
-<div style="text-align: center;">
-  <button onclick="predictGenres()" style="font-size: 1.2em; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Get Predicted Genres</button>
-</div>
+  button {
+    padding: 12px 25px;
+    font-size: 1.2em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-<!-- Result Section -->
-<div id="result" style="display: flex; justify-content: center; align-items: center; margin-top: 40px; font-size: 1.3em;">
-  <div style="border: 2px solid #ddd; padding: 20px; border-radius: 10px; width: 60%; text-align: center;">
-    <!-- Predicted Genres -->
-    <div id="predictedGenres" style="font-weight: bold; color: #444;"></div>
+  button:hover {
+    background-color: #45a049;
+  }
+
+  .result-box {
+    border: 2px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    margin: 0 auto;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #444;
+  }
+
+  ol {
+    font-size: 1.1em;
+  }
+</style>
+
+<!-- Page Content -->
+<div class="container">
+  <!-- Page Title -->
+  <h1>🎌 Otaku Tag - Genre Prediction 🎌</h1>
+
+  <!-- Instructions -->
+  <p>Enter a description of an anime or manga below, and let our AI model predict its genres!</p>
+
+  <hr>
+
+  <!-- Input Section -->
+  <h2>📚 Enter Anime/Manga Description:</h2>
+  <p>Type a brief description of the anime or manga, and we will predict the genres associated with it.</p>
+
+  <!-- Description Input -->
+  <input id="description" type="text" placeholder="Enter description here...">
+
+  <!-- Prediction Button -->
+  <div>
+    <button onclick="predictGenres()">Get Predicted Genres</button>
   </div>
+
+  <!-- Result Section -->
+  <div id="result" class="result-box">
+    <div id="predictedGenres">Predicted genres will appear here.</div>
+  </div>
+
+  <hr>
+
 </div>
-
-<hr>
-
-<!-- How It Works Section -->
-<h2 style="text-align: center;">🎬 How It Works:</h2>
-<ol style="text-align: center; font-size: 1.1em;">
-  <li><strong>Enter a description</strong>: Type a brief description of an anime or manga.</li>
-  <li><strong>Get a prediction</strong>: The model will predict the genres based on the description.</li>
-  <li><strong>Explore more</strong>: Try different descriptions to explore more genres.</li>
-</ol>
-<p style="text-align: center;">Once you enter the description, the predicted genres will appear below.</p>
 
 <script>
   async function predictGenres() {
@@ -52,7 +116,6 @@ layout: page
           alert("Please enter a description.");
           return;
       }
-
       const apiUrl = "https://soothsayer1221-otaku-tag.hf.space/gradio_api/call/predict"; 
 
       // Construct the request payload
@@ -74,17 +137,11 @@ layout: page
           if (!eventId) {
               throw new Error("No event_id returned from the API.");
           }
-
           console.log("Event ID:", eventId);
-          debugger
-          // Poll the API to get the result using event_id
           const resultResponse = await pollForResult(eventId)
-          debugger
-          // Extract prediction result
           const predictedGenres = resultResponse|| "No genres predicted.";
 
-          // Display result
-          document.getElementById("predictedGenres").innerText = `Predicted Genres: ${predictedGenres}`;
+          document.getElementById("predictedGenres").innerText = `${predictedGenres}`;
       } catch (error) {
           console.error("Error:", error);
           document.getElementById("predictedGenres").innerText = "Error fetching prediction.";
